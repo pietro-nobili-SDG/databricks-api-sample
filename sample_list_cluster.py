@@ -9,18 +9,18 @@ from databricks_cli.clusters.api import ClusterApi
 from databricks_cli.sdk.api_client import ApiClient
 from loguru import logger as lg
 
-from utils import HOST, get_env
+from utils import ENV_DATABRICKS_TOKEN, HOST, get_env
 
 
 def sample_list_cluster():
     """Sample use of the list_cluster function.
-    
+
     https://docs.databricks.com/dev-tools/python-api.html
     """
 
     api_client = ApiClient(
         host=HOST,
-        token=get_env(),
+        token=get_env(ENV_DATABRICKS_TOKEN),
     )
 
     cluster_api = ClusterApi(api_client)

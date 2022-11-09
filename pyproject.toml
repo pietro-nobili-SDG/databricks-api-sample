@@ -10,6 +10,7 @@ databricks-cli = "^0.17.3"
 black = "^22.10.0"
 loguru = "^0.6.0"
 isort = "^5.10.1"
+hvac = {extras = ["parser"], version = "^1.0.2"}
 
 [tool.poetry.dev-dependencies]
 
