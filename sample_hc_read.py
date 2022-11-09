@@ -35,6 +35,8 @@ def sample_hc_read():
         return
     lg.debug(f"{type(read_response)=}")
     lg.debug(f"{jd(read_response['data'])=}")
+    lg.debug(f"{type(read_response['data'])=}")
+    lg.debug(f"{read_response['data']=}")
 
 
 def sample_hc_write_secret():

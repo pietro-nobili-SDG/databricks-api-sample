@@ -128,13 +128,29 @@ GitHub authentication enables a user to authenticate with Vault by providing the
 
 ## Store and read secrets
 
+```bash
+vault kv put -mount=secret hello foo=-
+# then type the secret and press Ctrl+D
+```
+
 ### Python [HVAC](https://github.com/hvac/hvac)
 
-For mystical reasons the python interface adds `data` as prefix?
+For mystical reasons the python interface adds `data` as prefix.
 Which is documented in `read_secret_version` and `create_or_update_secret`:
 `GET: /{mount_point}/data/{path}. Produces: 200 application/json`
 but still. Why.
+Apparently [kv2 secrets require that](https://github.com/hvac/hvac/issues/806).
+Bah.
+
+So create the corresponding secrets with
 
 ```bash
 vault kv put -mount=secret data/hello foo=world
 ```
+
+and access them with `path="hello"`.
+
+## UI
+
+Remember that there is a
+[nifty web UI](http://localhost:8200/ui/vault/secrets).

@@ -6,10 +6,9 @@ https://docs.databricks.com/dev-tools/python-api.html
 import json
 
 from databricks_cli.clusters.api import ClusterApi
-from databricks_cli.sdk.api_client import ApiClient
 from loguru import logger as lg
 
-from utils import ENV_DATABRICKS_TOKEN, HOST, get_env
+from utils import get_databricks_client
 
 
 def sample_list_cluster():
@@ -18,10 +17,7 @@ def sample_list_cluster():
     https://docs.databricks.com/dev-tools/python-api.html
     """
 
-    api_client = ApiClient(
-        host=HOST,
-        token=get_env(ENV_DATABRICKS_TOKEN),
-    )
+    api_client = get_databricks_client()
 
     cluster_api = ClusterApi(api_client)
     clusters_list = cluster_api.list_clusters()
@@ -30,6 +26,7 @@ def sample_list_cluster():
     for cluster in clusters_list["clusters"]:
         lg.info(f"{cluster['cluster_name']}, {cluster['cluster_id']}")
 
+    cluster = clusters_list["clusters"][0]
     lg.info(json.dumps(cluster, indent=4))
 
 
