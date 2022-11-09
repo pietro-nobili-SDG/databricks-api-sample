@@ -11,6 +11,7 @@ black = "^22.10.0"
 loguru = "^0.6.0"
 isort = "^5.10.1"
 hvac = {extras = ["parser"], version = "^1.0.2"}
+jsons = "^1.6.3"
 
 [tool.poetry.dev-dependencies]
 

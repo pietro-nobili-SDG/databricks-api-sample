@@ -64,9 +64,9 @@ def get_databricks_client() -> ApiClient:
 ##################################################
 
 
-def jd(obj: Any) -> str:
+def jd(obj: Any, **kwargs) -> str:
     """Json dumps an object."""
-    return json.dumps(obj)
+    return json.dumps(obj, **kwargs)
 
 
 ##################################################

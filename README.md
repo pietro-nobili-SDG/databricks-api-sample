@@ -110,3 +110,13 @@ cluster_api.create_cluster(json_conf)
 ```
 
 ### Jobs
+
+### Tasks
+
+Tasks are not documented on databricks?
+There is only the
+[full job API specification](https://learn.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/jobs),
+that you can get as a `.yaml` file,
+and inspect in [swagger.io](https://editor.swagger.io/).
+
+Look for `JobTaskSettings`.

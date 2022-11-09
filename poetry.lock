@@ -109,6 +109,20 @@ colors = ["colorama (>=0.4.3,<0.5.0)"]
 plugins = ["setuptools"]
 
 [[package]]
+name = "jsons"
+version = "1.6.3"
+description = "For serializing Python objects to JSON (dicts) and back"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+typish = ">=1.9.2"
+
+[package.extras]
+test = ["attrs", "coverage", "codecov", "pytest", "scons", "dataclasses", "tzdata"]
+
+[[package]]
 name = "loguru"
 version = "0.6.0"
 description = "Python logging made (stupidly) simple"
@@ -240,6 +254,17 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "typish"
+version = "1.9.3"
+description = "Functionality for types"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["numpy", "nptyping (>=1.3.0)", "pycodestyle", "pylint", "mypy", "pytest", "coverage", "codecov"]
+
+[[package]]
 name = "urllib3"
 version = "1.26.12"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -266,7 +291,7 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ece256cd97b4581b40112bcb9f2c235507c463d674675bd1d3054299fc455a89"
+content-hash = "0b629d9e33a36e6253bc93ef1a5da6c1a9bda2bbd28049d30093fda3284aa466"
 
 [metadata.files]
 black = []
@@ -284,6 +309,7 @@ isort = [
     {file = "isort-5.10.1-py3-none-any.whl", hash = "sha256:6f62d78e2f89b4500b080fe3a81690850cd254227f27f75c3a0c491a1f351ba7"},
     {file = "isort-5.10.1.tar.gz", hash = "sha256:e8443a5e7a020e9d7f97f1d7d9cd17c88bcb3bc7e218bf9cf5095fe550be2951"},
 ]
+jsons = []
 loguru = []
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
@@ -305,5 +331,6 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 typing-extensions = []
+typish = []
 urllib3 = []
 win32-setctime = []
