@@ -1,9 +1,13 @@
 {
     "cSpell.words": [
+        "autotermination",
         "databricks",
+        "fcst",
         "Hashi",
         "hvac",
-        "loguru"
+        "idempotency",
+        "loguru",
+        "PYSPARK"
     ],
     "python.analysis.typeCheckingMode": "basic"
 }

@@ -29,6 +29,13 @@ def sample_list_cluster():
     cluster = clusters_list["clusters"][0]
     lg.info(json.dumps(cluster, indent=4))
 
+    cluster_name = "ds_dev_fcst_inbound_01"
+    # this actually returns a list of cluster info
+    # cluster_ids = cluster_api.get_cluster_ids_by_name(cluster_name)
+    clusters = cluster_api.get_cluster_ids_by_name(cluster_name)
+    for cluster in clusters:
+        lg.info("{}: {}", cluster_name, cluster["cluster_id"])
+
 
 if __name__ == "__main__":
     sample_list_cluster()

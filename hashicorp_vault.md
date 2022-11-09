@@ -74,7 +74,7 @@ vault operator unseal
 ```
 
 and paste the unseal keys one by one.
-This can be done bu multiple operators from multiple computers,
+This can be done by multiple operators from multiple computers,
 and the unseal keys should not be stored together.
 
 Now the vault is unsealed for every user.
