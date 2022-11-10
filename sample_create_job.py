@@ -1,5 +1,5 @@
 """Sample interface with databricks API."""
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 import jsons
 from loguru import logger as lg
 
@@ -7,42 +7,174 @@ from utils import jd
 
 
 class CronSchedule:
-    """Schema of CronSchedule.
-
-    TODO: make optional fields Optional like JobSettings.
-    """
+    """Schema of CronSchedule."""
 
     def __init__(
         self,
         quartz_cron_expression: str,
         timezone_id: str,
-        pause_status: Literal["PAUSED", "UNPAUSED"] = "UNPAUSED",
+        pause_status: Optional[Literal["PAUSED", "UNPAUSED"]],
     ) -> None:
-        # A Cron expression using Quartz syntax that describes the schedule for a job.
+        """Build a CronSchedule.
+
+        Args:
+            quartz_cron_expression (str):
+                A Cron expression using Quartz syntax that describes the
+                schedule for a job. See
+                [Cron Trigger](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html)
+                for details.
+            timezone_id (str):
+                A Java timezone ID. The schedule for a job is resolved with
+                respect to this timezone.
+            pause_status (Optional[Literal['PAUSED', 'UNPAUSED']]):
+                Indicate whether this schedule is paused or not.
+        """
         self.quartz_cron_expression = quartz_cron_expression
-        # A Java timezone ID. The schedule for a job is resolved with respect to this timezone.
         self.timezone_id = timezone_id
-        # Indicate whether this schedule is paused or not.
-        self.pause_status = pause_status
+        if pause_status is not None:
+            self.pause_status = pause_status
 
 
 class JobEmailNotifications:
-    """Schema of JobEmailNotifications.
+    """Schema of JobEmailNotifications."""
 
-    TODO: make optional fields Optional like JobSettings.
+    def __init__(
+        self,
+        on_start: Optional[List[str]] = None,
+        on_success: Optional[List[str]] = None,
+        on_failure: Optional[List[str]] = None,
+        no_alert_for_skipped_runs: Optional[bool] = None,
+    ) -> None:
+        if on_start is not None:
+            self.on_start = on_start
+        if on_success is not None:
+            self.on_success = on_success
+        if on_failure is not None:
+            self.on_failure = on_failure
+        if no_alert_for_skipped_runs is not None:
+            self.no_alert_for_skipped_runs = no_alert_for_skipped_runs
+
+
+class Library:
+    """Schema of Library.
+
+    Should be fancier, with pypi being a PythonPyPiLibrary.
     """
 
     def __init__(
         self,
-        on_start: List[str] = [],
-        on_success: List[str] = [],
-        on_failure: List[str] = [],
-        no_alert_for_skipped_runs: bool = False,
+        package: str,
     ) -> None:
-        self.on_start = on_start
-        self.on_success = on_success
-        self.on_failure = on_failure
-        self.no_alert_for_skipped_runs = no_alert_for_skipped_runs
+        self.pypi = {"package": package}
+
+
+class NotebookTask:
+    """Schema of NotebookTask."""
+
+    def __init__(
+        self,
+        notebook_path: str,
+        source: Optional[str] = None,
+        base_parameters: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Create a NotebookTask.
+
+        Args:
+            notebook_path (str):
+                The path of the notebook to be run in the Azure Databricks
+                workspace or remote repository. For notebooks stored in the
+                Databricks workspace, the path must be absolute and begin with a
+                slash. For notebooks stored in a remote repository, the path
+                must be relative.
+            source (Optional[str], optional):
+                Optional location type of the notebook. When set to `WORKSPACE`,
+                the notebook will be retrieved from the local Azure Databricks
+                workspace. When set to `GIT`, the notebook will be retrieved
+                from a Git repository defined in `git_source`. If the value is
+                empty, the task will use `GIT` if `git_source` is defined and
+                `WORKSPACE` otherwise.
+            base_parameters (Optional[Dict[str, Any]], optional):
+                Base parameters to be used for each run of this job.
+                If the run is initiated by a call to
+                [`run-now`](https://docs.microsoft.com/azure/databricks/dev-tools/api/latest/jobs#operation/JobsRunNow)
+                with parameters specified, the two parameters maps are merged.
+                If the same key is specified in `base_parameters`
+                and in `run-now`, the value from `run-now` is used.
+
+                Use
+                [Task parameter variables](https://docs.microsoft.com/azure/databricks/jobs#parameter-variables)
+                to set parameters containing information about job runs.
+
+                If the notebook takes a parameter that is not specified in the job’s
+                `base_parameters` or the `run-now` override parameters, the default
+                value from the notebook is used.
+
+                Retrieve these parameters in a notebook using
+                [dbutils.widgets.get](https://docs.microsoft.com/azure/databricks/dev-tools/databricks-utils#dbutils-widgets).
+        """
+        self.notebook_path = notebook_path
+        if source is not None:
+            self.source = source
+        if base_parameters is not None:
+            self.base_parameters = base_parameters
+
+
+class TaskDependency:
+    """Schema of ``TaskDependencies``.
+
+    ``TaskDependencies`` is actually an array of dependencies.
+    But I don't know how to avoid having the name of the attribute as key
+
+        self.dependencies = [ {'task_key': 'task00'}, ... ]
+
+    Would produce in the json something like
+
+        "dependencies": [ ... ]
+
+    That is not part of the API, which wants, inside the ``JobTaskSettings``,
+    directly the array at the key ``depends_on``.
+    So we just pass a List[TaskDependency] to ``depends_on``.
+    """
+
+    def __init__(
+        self,
+        task_key: str,
+    ) -> None:
+        self.task_key = task_key
+
+
+class JobTaskSettings:
+    """Schema of JobTaskSettings."""
+
+    def __init__(
+        self,
+        task_key: str,
+        depends_on: Optional[List[TaskDependency]] = None,
+        notebook_task: Optional[NotebookTask] = None,
+        existing_cluster_id: Optional[str] = None,
+        libraries: Optional[List[Library]] = None,
+    ) -> None:
+        """Initialize a JobTaskSettings.
+
+        Args:
+            task_key (str): This is the description for this task.
+            depends_on (Optional[List[TaskDependency]], optional):
+                An optional array of objects specifying the dependency graph of
+                the task. All tasks specified in this field must complete
+                successfully before executing this task.
+            libraries (Optional[List[Library]], optional):
+                An optional list of libraries to be installed on the cluster
+                that executes the task.
+        """
+        self.task_key = task_key
+        if depends_on is not None:
+            self.depends_on = depends_on
+        if notebook_task is not None:
+            self.notebook_task = notebook_task
+        if existing_cluster_id is not None:
+            self.existing_cluster_id = existing_cluster_id
+        if libraries is not None:
+            self.libraries = libraries
 
 
 class JobSettings:
@@ -55,6 +187,7 @@ class JobSettings:
         timeout_seconds: Optional[int] = None,
         schedule: Optional[CronSchedule] = None,
         max_concurrent_runs: Optional[int] = None,
+        tasks: Optional[List[JobTaskSettings]] = None,
     ) -> None:
         """Create a JobSettings.
 
@@ -83,6 +216,8 @@ class JobSettings:
             self.schedule = schedule
         if max_concurrent_runs is not None:
             self.max_concurrent_runs = max_concurrent_runs
+        if tasks is not None:
+            self.tasks = tasks
 
 
 def sample_create_job() -> None:
@@ -93,15 +228,52 @@ def sample_create_job() -> None:
         pause_status="UNPAUSED",
     )
     email_notifications = JobEmailNotifications(
-        on_start=["mail@s1.com"],
-        on_success=["mail@s1.com", "mail@s2.com"],
-        on_failure=["mail@s1.com", "mail@s2.com"],
+        on_start=[
+            "mail@s1.com",
+        ],
+        on_success=[
+            "mail@s1.com",
+            "mail@s2.com",
+        ],
+        on_failure=[
+            "mail@s1.com",
+            "mail@s2.com",
+        ],
     )
+    libraries = [
+        Library("pyarrow==8.0.0"),
+        Library("snowflake-sqlalchemy"),
+        Library("tqdm"),
+    ]
+    base_parameters = {"line": 10, "gender": "M"}
+    notebook_task = NotebookTask(
+        notebook_path="/the/path",
+        source="WORKSPACE",
+        base_parameters=base_parameters,
+    )
+    existing_cluster_id = "cluster_id"
+    tasks = [
+        JobTaskSettings(
+            task_key="task_key_00",
+            notebook_task=notebook_task,
+            existing_cluster_id=existing_cluster_id,
+            libraries=libraries,
+        ),
+        JobTaskSettings(
+            task_key="task_key_01",
+            depends_on=[
+                TaskDependency("task_key_00"),
+            ],
+            notebook_task=notebook_task,
+            existing_cluster_id=existing_cluster_id,
+        ),
+    ]
     job = JobSettings(
         name="job_name",
         email_notifications=email_notifications,
         timeout_seconds=0,
         schedule=schedule,
+        tasks=tasks,
         max_concurrent_runs=1,
     )
     lg.info(
