@@ -12,7 +12,13 @@ from requests import Response
 
 from utils import get_databricks_client, jd
 
-CREATE_TEMPLATE = """{{
+# TODO
+# the keys
+# "single_user_name": "mail@customer.eu",
+# "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
+# are missing in the API, do we need them? what do they do?
+
+CREATE_CLUSTER_TEMPLATE = """{{
     "num_workers": 0,
     "cluster_name": "{cluster_name}",
     "spark_version": "10.4.x-scala2.12",
@@ -39,14 +45,14 @@ CREATE_TEMPLATE = """{{
 """
 
 
-def sample_create_cluster():
+def sample_create_cluster() -> None:
     """Sample use of the create_cluster func."""
     # get the api handler
     api_client = get_databricks_client()
     cluster_api = ClusterApi(api_client)
 
     # build the string and get a dict from it
-    json_conf_str = CREATE_TEMPLATE.format(
+    json_conf_str = CREATE_CLUSTER_TEMPLATE.format(
         cluster_name="test_databricks_api_01",
         autotermination_minutes=10,
     )

@@ -45,9 +45,9 @@ def sample_create_job_auto_task() -> None:
         #     {"line": 16, "gender": "M"},
         # ],
     }
+    shared_params = {"season": "2023-3"}
 
     tasks = []
-    season_param = {"season": "2023-3"}
     for cluster_id, params in params_by_cluster.items():
 
         # new cluster, reset state
@@ -61,7 +61,7 @@ def sample_create_job_auto_task() -> None:
 
             # add the season to the params
             # which is modifying the list so I kinda hate it
-            p.update(season_param)
+            p.update(shared_params)
 
             # build the task
             notebook_task = NotebookTask(
@@ -200,4 +200,3 @@ def sample_create_job_manual() -> None:
 if __name__ == "__main__":
     # sample_create_job_manual()
     sample_create_job_auto_task()
-

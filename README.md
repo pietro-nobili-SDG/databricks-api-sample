@@ -109,9 +109,13 @@ json_conf = ...
 cluster_api.create_cluster(json_conf)
 ```
 
-### Jobs
+### Jobs and Tasks
 
-### Tasks
+<!-- TODO a list job sample would be nice -->
+
+* https://docs.databricks.com/dev-tools/python-api.html
+* https://github.com/databricks/databricks-cli/blob/main/databricks_cli/jobs/api.py
+* https://github.com/databricks/databricks-cli/blob/main/databricks_cli/runs/api.py
 
 Tasks are not documented on databricks?
 There is only the
@@ -119,4 +123,4 @@ There is only the
 that you can get as a `.yaml` file,
 and inspect in [swagger.io](https://editor.swagger.io/).
 
-Look for `JobTaskSettings`.
+Look for `JobTaskSettings` and navigate around.
