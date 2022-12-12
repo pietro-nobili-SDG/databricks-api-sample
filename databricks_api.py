@@ -153,6 +153,8 @@ class JobTaskSettings:
         notebook_task: Optional[NotebookTask] = None,
         existing_cluster_id: Optional[str] = None,
         libraries: Optional[List[Library]] = None,
+        max_retries: Optional[int] = None,
+        min_retry_interval_millis: Optional[int] = None,
     ) -> None:
         """Initialize a JobTaskSettings.
 
@@ -162,9 +164,21 @@ class JobTaskSettings:
                 An optional array of objects specifying the dependency graph of
                 the task. All tasks specified in this field must complete
                 successfully before executing this task.
+            notebook_task (Optional[NotebookTask]): The notebook task to run.
+            existing_cluster_id (Optional[str]): Cluster id to run the task on.
             libraries (Optional[List[Library]], optional):
                 An optional list of libraries to be installed on the cluster
                 that executes the task.
+            max_retries (Optional[int]):
+                An optional maximum number of times to retry an unsuccessful
+                run. A run is considered to be unsuccessful if it completes with
+                the `FAILED` result_state or `INTERNAL_ERROR` `life_cycle_state`.
+                The value -1 means to retry indefinitely and the value 0 means
+                to never retry. The default behavior is to never retry.
+            min_retry_interval_millis (Optional[int]): 
+                An optional minimal interval in milliseconds between the start
+                of the failed run and the subsequent retry run. The default
+                behavior is that unsuccessful runs are immediately retried.
         """
         self.task_key = task_key
         if depends_on is not None:
@@ -175,6 +189,10 @@ class JobTaskSettings:
             self.existing_cluster_id = existing_cluster_id
         if libraries is not None:
             self.libraries = libraries
+        if max_retries is not None:
+            self.max_retries = max_retries
+        if min_retry_interval_millis is not None:
+            self.min_retry_interval_millis = min_retry_interval_millis
 
 
 class JobSettings:
