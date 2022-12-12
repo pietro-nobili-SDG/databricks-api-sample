@@ -141,7 +141,7 @@ def sample_customer_projection_tasks() -> None:
     json_payload = jsons.dump(job, strip_privates=True)
 
     # dump the result
-    lg.info("job: \n{}", jd(json_payload, indent=4))
+    lg.info("job: \n{}", jd(json_payload))
 
     # create the job API interface
     jobs_api = JobsApi(api_client)

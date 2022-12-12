@@ -64,9 +64,9 @@ def get_databricks_client() -> ApiClient:
 ##################################################
 
 
-def jd(obj: Any, **kwargs) -> str:
-    """Json dumps an object."""
-    return json.dumps(obj, **kwargs)
+def jd(json_obj: object, indent=4, **kwargs) -> str:
+    """A thin wrapper around json.dumps with default 4 indent."""
+    return json.dumps(json_obj, indent=indent, **kwargs)
 
 
 ##################################################

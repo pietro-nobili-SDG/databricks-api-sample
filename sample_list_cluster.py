@@ -37,5 +37,38 @@ def sample_list_cluster():
         lg.info("{}: {}", cluster_name, cluster["cluster_id"])
 
 
+def get_cluster_id_by_name(
+    cluster_name: str,
+) -> str:
+    """A wrapper for cluster_api.get_cluster_ids_by_name.
+
+    We assume there is a single cluster by that name.
+
+    Raises:
+        KeyError: If there are no cluster by that name.
+
+    Returns:
+        str: The cluster id.
+    """
+    api_client = get_databricks_client()
+    cluster_api = ClusterApi(api_client)
+
+    # this actually returns a list of cluster info
+    clusters = cluster_api.get_cluster_ids_by_name(cluster_name)
+    # for cluster in clusters:
+    #     lg.info("{}: {}", cluster_name, cluster["cluster_id"])
+
+    if len(clusters) == 0:
+        raise KeyError(f"There are {len(clusters)} cluster named {cluster_name}.")
+
+    if len(clusters) != 1:
+        lg.warning("There are {} cluster named {}.", len(clusters), cluster_name)
+
+    # we still return the first
+    cluster = clusters[0]
+
+    return cluster["cluster_id"]
+
+
 if __name__ == "__main__":
     sample_list_cluster()

@@ -1,4 +1,5 @@
 """Sample interface with databricks API."""
+from databricks_cli.jobs.api import JobsApi
 import jsons
 from loguru import logger as lg
 
@@ -11,7 +12,7 @@ from databricks_api import (
     NotebookTask,
     TaskDependency,
 )
-from utils import jd
+from utils import get_databricks_client, jd
 
 
 def sample_create_job_auto_task() -> None:
@@ -120,13 +121,7 @@ def sample_create_job_auto_task() -> None:
     )
 
     # dump the result
-    lg.info(
-        "job: \n{}",
-        jd(
-            jsons.dump(job, strip_privates=True),
-            indent=4,
-        ),
-    )
+    lg.info("job: \n{}", jd(jsons.dump(job, strip_privates=True)))
 
 
 def sample_create_job_manual() -> None:
@@ -188,13 +183,30 @@ def sample_create_job_manual() -> None:
     )
 
     # dump the result
-    lg.info(
-        "job: \n{}",
-        jd(
-            jsons.dump(job, strip_privates=True),
-            indent=4,
-        ),
-    )
+    lg.info("job: \n{}", jd(jsons.dump(job, strip_privates=True)))
+
+
+def create_job(
+    job: JobSettings,
+    dry_run: bool = False,
+) -> str:
+    """Create the requested job."""
+    # turn the JobSettings into a dict
+    json_payload = jsons.dump(job, strip_privates=True)
+    lg.info("Will create job with payload {}", jd(json_payload))
+
+    # get the main API client
+    api_client = get_databricks_client()
+    # create the job API interface
+    jobs_api = JobsApi(api_client)
+
+    if dry_run:
+        return "dry_run"
+
+    # create the actual job
+    job_create_response = jobs_api.create_job(json=json_payload)
+
+    return job_create_response["job_id"]
 
 
 if __name__ == "__main__":
