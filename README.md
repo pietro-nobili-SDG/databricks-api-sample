@@ -124,3 +124,37 @@ that you can get as a `.yaml` file,
 and inspect in [swagger.io](https://editor.swagger.io/).
 
 Look for `JobTaskSettings` and navigate around.
+
+### Run an existing job
+
+Using a direct REST request, which is generally useful to launch the databricks job from another service.
+
+#### Authenticate
+
+https://docs.databricks.com/dev-tools/api/latest/authentication.html
+
+#### Start the run via CLI
+
+https://docs.databricks.com/dev-tools/api/latest/jobs.html#operation/JobsRunNow
+
+In the URL, substitute `<databricks-instance>` with the domain name of your deployment. Use the form `<account>.cloud.databricks.com.`
+So `https://<databricks-instance>/api/2.1/jobs/run-now`.
+
+A test job id is `452227639654507`.
+Guess dev host is `https://adb-8552426296089162.2.azuredatabricks.net/`.
+
+Run the whole thing with
+
+```bash
+export DATABRICKS_HOST="https://adb-8552426296089162.2.azuredatabricks.net"
+    export DATABRICKS_TOKEN="secret-1234-token"
+curl -X POST --header "Authorization: Bearer $DATABRICKS_TOKEN" -H "Content-Type: application/json" -d @job_run_test.json $DATABRICKS_HOST/api/2.1/jobs/run-now
+```
+
+where `@job_run_test.json` contains
+
+```json
+{
+    "job_id": 452227639654507
+}
+```
